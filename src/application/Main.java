@@ -5,15 +5,15 @@ import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 public class Main {
-    public static void main(String[] args) {
-        Department department = new Department(1, "Books");
-
-        Seller seller = new Seller(21, department, 3000.0, new Date(), "wellingtonflores@gmail.com", "Wellington Flores");
+    public static void main(String[] args) throws SQLException {
 
         SellerDao sellerDao = DaoFactory.createSellerDao();
+
+        Seller seller = sellerDao.findById(3);
 
         System.out.println(seller);
     }
