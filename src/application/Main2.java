@@ -21,9 +21,13 @@ public class Main2 {
         Department department = departmentDao.findById(1);
         System.out.println(department);
 
-        System.out.println("==== TEST 2: seller findAll ====");
+        System.out.println("==== TEST 2: department findAll ====");
         departmentDao.findAll();
 
+        System.out.println("==== TEST 3: department insert ====");
+        Department newDepartment = new Department(null, "Flowers");
+        departmentDao.insert(newDepartment);
+        System.out.println("Inserted! New id = " + newDepartment.getId());
 
         System.out.println("==== TEST 6: department delete ====");
         System.out.println("Enter id for delete test: ");

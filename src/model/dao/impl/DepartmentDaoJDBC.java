@@ -21,12 +21,31 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void insert(Department department) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO department (Name) VALUES (?)",
+                PreparedStatement.RETURN_GENERATED_KEYS
+        )){
+            preparedStatement.setString(1, department.getName());
+            int rowsAffected = preparedStatement.executeUpdate();
 
+            if(rowsAffected > 0){
+                try(ResultSet resultSet = preparedStatement.getGeneratedKeys()){
+                    if(resultSet.next()){
+                        int id = resultSet.getInt(1);
+                        department.setId(id);
+                    }
+                }
+            } else {
+                throw  new DbException("Erro inesperado! Nenhuma linha foi inserida.");
+            }
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
     }
 
     @Override
     public void update(Department department) {
-
+        // FALTA SÓ ESSE
     }
 
     @Override
