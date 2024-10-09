@@ -1,11 +1,14 @@
 package model.dao.impl;
 
+import db.DbException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentDaoJDBC implements DepartmentDao {
@@ -38,11 +41,43 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public Department findById(Integer id) {
-        return null;
+        try(PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM department WHERE Id = ?")){
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                return instantiateDepartment(resultSet);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
+
+    private Department instantiateDepartment(ResultSet resultSet) throws SQLException {
+        Department department = new Department();
+        department.setId(resultSet.getInt("Id"));
+        department.setName(resultSet.getString("Name"));
+        return department;
     }
 
     @Override
     public List<Department> findAll() {
-        return List.of();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * FROM department"
+        )){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Department> list = new ArrayList<>();
+            while (resultSet.next()){
+                Department department = instantiateDepartment(resultSet);
+                list.add(department);
+            }
+            for(Department obj : list){
+                System.out.println(obj);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 }
